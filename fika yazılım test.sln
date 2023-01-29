@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.1.32414.318
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fika yazılım test", "fika yazılım test\fika yazılım test.csproj", "{E34339E4-FBD7-46F5-96D8-3B5706E1AFB2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E34339E4-FBD7-46F5-96D8-3B5706E1AFB2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E34339E4-FBD7-46F5-96D8-3B5706E1AFB2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E34339E4-FBD7-46F5-96D8-3B5706E1AFB2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E34339E4-FBD7-46F5-96D8-3B5706E1AFB2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {43ECE11A-D62C-444C-B9B8-1E6FD6810635}
+	EndGlobalSection
+EndGlobal

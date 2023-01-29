@@ -1,0 +1,85 @@
+﻿@{
+    Layout = "_Layout";
+}
+
+<div class="row " ng-controller="HomeCtrl" ng-init="init()">
+    <div class="col-12">
+        <div class="row">
+            <div class="col-8 mt-2_7">
+                <div class="card">
+                    <h5 class="my-card-title card-title">öğrenci listesi</h5>
+                    <div class="card-body">
+                        <div class="card m-1">
+                            <h5 class="my-card-title card-title">Filter</h5>
+                            <div class="card-body">
+                                <form class="row g-2">
+                                    <div class="col-auto">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text" id="basic-addon1"><i class="fa fa-magnifying-glass"></i></span>
+                                            <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="button-addon2">
+                                            <button class="btn btn-outline-secondary" type="button" id="button-addon2">%</button>
+                                        </div>
+                                    </div>
+                                    <div class="col-auto">
+                                        <select class="form-select" aria-label="Default select example">
+                                            <option selected>Open this select menu</option>
+                                            <option value="1">One</option>
+                                            <option value="2">Two</option>
+                                            <option value="3">Three</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-auto">
+                                        <select class="form-select" aria-label="Default select example">
+                                            <option selected>Open this select menu</option>
+                                            <option value="1">One</option>
+                                            <option value="2">Two</option>
+                                            <option value="3">Three</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-auto">
+                                        <button type="submit" class="btn btn-primary mb-3">Ara</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <table class="table table-striped ">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Ad Soyad</th>
+                                    <th scope="col">Bölüm</th>
+                                    <th scope="col">Hobiler</th>
+                                    <th scope="col">Sinif Ögretmen</th>
+                                    <th scope="col">Rehber Ögretmen</th>
+                                    <th scope="col">Işiem</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th scope="row">1</th>
+                                    <td>Mark</td>
+                                    <td>Otto</td>
+                                    <td>@@mdo</td>
+                                    <td>@@mdo</td>
+                                    <td>@@mdo</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class=""><button class="col-5 offset-7 badge bg-secondary fs-5">Yeni öğrenci ...</button></div>
+                <div class="card mt-2">
+                    <h5 class="my-card-title card-title">öğrenci form</h5>
+                    <div class="card-body">
+
+                        <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        <a href="#" class="card-link">Card link</a>
+                        <a href="#" class="card-link">Another link</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

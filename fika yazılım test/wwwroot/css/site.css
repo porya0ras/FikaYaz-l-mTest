@@ -1,0 +1,31 @@
+html {
+  font-size: 14px;
+}
+
+@media (min-width: 768px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  margin-bottom: 60px;
+}
+
+.my-card-title {
+    position: relative !important;
+    text-align: center !important;
+    margin-top: -15px !important;
+    margin-left: 28px !important;
+    background: white !important;
+    width: 140px !important;
+}
+
+.mt-2_7 {
+    margin-top: 2.85rem !important;
+}
