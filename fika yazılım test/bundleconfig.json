@@ -9,9 +9,29 @@
     ]
   },
   {
+    "outputFileName": "wwwroot/css/angular.plugins.css",
+    // An array of relative input file paths. Globbing patterns supported
+    "inputFiles": [
+      "wwwroot/lib/ui-select/select.css"
+    ]
+  },
+  {
     "outputFileName": "wwwroot/js/site.min.js",
     "inputFiles": [
       "wwwroot/js/site.js"
+    ],
+    // Optionally specify minification options
+    "minify": {
+      "enabled": true,
+      "renameLocals": true
+    },
+    // Optinally generate .map file
+    "sourceMap": false
+  },
+  {
+    "outputFileName": "wwwroot/js/angular.plugins.js",
+    "inputFiles": [
+      "wwwroot/lib/ui-select/select.js"
     ],
     // Optionally specify minification options
     "minify": {

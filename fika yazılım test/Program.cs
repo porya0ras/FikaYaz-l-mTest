@@ -12,7 +12,7 @@ builder.Services.AddMvc();
 builder.Services.AddDbContext<FikaTestDbContext>(options => options.UseInMemoryDatabase("fikadb"));
 builder.Services.AddTransient<IAppVersionService, AppVersionService>();
 
-
+//init Data
 Task.Run(async () =>
 {
     await Task.Delay(1000);
@@ -30,7 +30,7 @@ Task.Run(async () =>
             Logger.LogError(ex, "Error in SeedData.");
         }
     }
-});
+}).Wait();
 
 var app = builder.Build();
 

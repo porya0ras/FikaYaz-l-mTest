@@ -3,6 +3,7 @@
 
     angular.module('app', [
         // Angular modules 
+        'ui.select',
         'app.controllers'
         // Custom modules 
 

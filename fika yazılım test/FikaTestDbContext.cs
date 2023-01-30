@@ -8,10 +8,10 @@ public class FikaTestDbContext : DbContext
     public FikaTestDbContext(DbContextOptions options)
         : base(options) { }
 
-    public DbSet<ÖğrenciEntity> Öğrencilar { get; set; }
-    public DbSet<BölümEntity> Bölümlar { get; set; }
+    public DbSet<OgrenciEntity> Ogrenciler { get; set; }
+    public DbSet<BolumEntity> Bolumler { get; set; }
     public DbSet<HobiEntity> Hobilar { get; set; }
-    public DbSet<SinifÖgretmenEntity> SinifÖgretmenilar { get; set; }
-    public DbSet<RehberÖgretmenEntity> RehberÖgretmenilar { get; set; }
+    public DbSet<SinifOgretmenEntity> SinifOgretmeniler { get; set; }
+    public DbSet<RehberOgretmenEntity> RehberOgretmeniler { get; set; }
 }
 

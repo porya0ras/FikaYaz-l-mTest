@@ -12,31 +12,21 @@
                         <div class="card m-1">
                             <h5 class="my-card-title card-title">Filter</h5>
                             <div class="card-body">
-                                <form class="row g-2">
-                                    <div class="col-auto">
+                                <form class="row g-4">
+                                    <div class="col-4">
                                         <div class="input-group mb-3">
                                             <span class="input-group-text" id="basic-addon1"><i class="fa fa-magnifying-glass"></i></span>
-                                            <input type="text" class="form-control" placeholder="Recipient's username" aria-label="Recipient's username" aria-describedby="button-addon2">
+                                            <input ng-model="AdSoyadFilter" type="text" class="form-control" placeholder="Ara" aria-label="Ara" aria-describedby="button-addon2">
                                             <button class="btn btn-outline-secondary" type="button" id="button-addon2">%</button>
                                         </div>
                                     </div>
-                                    <div class="col-auto">
-                                        <select class="form-select" aria-label="Default select example">
-                                            <option selected>Open this select menu</option>
-                                            <option value="1">One</option>
-                                            <option value="2">Two</option>
-                                            <option value="3">Three</option>
-                                        </select>
+                                    <div class="col-3">
+                                        <select class="form-select" ng-model="HobiFilter" ng-options="x.value for x in Hobiler"></select>
                                     </div>
-                                    <div class="col-auto">
-                                        <select class="form-select" aria-label="Default select example">
-                                            <option selected>Open this select menu</option>
-                                            <option value="1">One</option>
-                                            <option value="2">Two</option>
-                                            <option value="3">Three</option>
-                                        </select>
+                                    <div class="col-3">
+                                        <select class="form-select" ng-model="SinifOgretmeniFilter" ng-options="x.value for x in SinifOgretmenler"></select>
                                     </div>
-                                    <div class="col-auto">
+                                    <div class="col-2">
                                         <button type="submit" class="btn btn-primary mb-3">Ara</button>
                                     </div>
                                 </form>
@@ -44,26 +34,41 @@
                         </div>
                         <table class="table table-striped ">
                             <thead>
-                                <tr>
-                                    <th scope="col">Ad Soyad</th>
-                                    <th scope="col">Bölüm</th>
+                                <tr class="table-dark">
+                                    <th scope="col"><a ng-click="ChangeAdSoyadSort(AdSoyadSort)"><i class="fa " ng-class="{'fa-fw fa-sort':AdSoyadSort==0,'fa-fw':AdSoyadSort==1,'fa-sort':AdSoyadSort==-1}"></i> Ad Soyad</a></th>
+                                    <th ng-click="ChangebolumSort()" scope="col"><i class="fa " ng-class="{'fa-fw fa-sort':bolumSort==0,'fa-fw':bolumSort==1,'fa-sort':bolumSort==-1}"></i> Bölüm</th>
                                     <th scope="col">Hobiler</th>
-                                    <th scope="col">Sinif Ögretmen</th>
+                                    <th ng-click="ChangeSinifOgretmeniSort()" scope="col"><i class="fa " ng-class="{'fa-fw fa-sort':SinifOgretmeniSort==0,'fa-fw':SinifOgretmeniSort==1,'fa-sort':SinifOgretmeniSort==-1}"></i> Sinif Ögretmen</th>
                                     <th scope="col">Rehber Ögretmen</th>
                                     <th scope="col">Işiem</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr>
-                                    <th scope="row">1</th>
-                                    <td>Mark</td>
-                                    <td>Otto</td>
-                                    <td>@@mdo</td>
-                                    <td>@@mdo</td>
-                                    <td>@@mdo</td>
+                                <tr ng-repeat="row in Ogrenciler" ng-if="Ogrenciler.length>0">
+                                    <td>{{row.nameFamily}}</td>
+                                    <td>{{row.bolum}}</td>
+                                    <td><div ng-repeat="h in row.hobilar">{{h}}</div>  </td>
+                                    <td>{{row.sinifOgretmeni}}</td>
+                                    <td>{{row.rehberOgretmeni}}</td>
+                                     <td><a ng-click="alert('d')">Detay</a> <a ng-click="alert('s')">Sill</a></td>
                                 </tr>
                             </tbody>
                         </table>
+                        <nav aria-label="">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item disabled">
+                                    <a class="page-link" href="#" tabindex="-1" aria-disabled="true">next</a>
+                                </li>
+                                <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                <li class="page-item active" aria-current="page">
+                                    <a class="page-link" href="#">2</a>
+                                </li>
+                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="#">pre</a>
+                                </li>
+                            </ul>
+                        </nav>
                     </div>
                 </div>
             </div>
@@ -73,10 +78,29 @@
                     <h5 class="my-card-title card-title">öğrenci form</h5>
                     <div class="card-body">
 
-                        <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-                        <a href="#" class="card-link">Card link</a>
-                        <a href="#" class="card-link">Another link</a>
+                        <div class="m-3 row">
+                            <label for="exampleDataList" class="form-label">Ad Soyad</label>
+                            <input class="form-control" ng-model="AdSoyad" list="datalistOptions" id="exampleDataList" placeholder="Type to search...">
+                        </div>
+                        <div class="m-3 row">
+                            <label for="exampleDataList" class="form-label">Bölüm</label>
+                            <select class="form-select" ng-model="bolum" ng-options="x.value for x in bolumler"></select>
+                        </div>
+                        <div class="m-3 row">
+                            <label for="exampleDataList" class="form-label">Hobiler</label>
+                            <select class="form-select" ng-model="Hobi" ng-options="x.value for x in Hobiler"></select>
+                        </div>
+                        <div class="m-3 row">
+                            <label for="exampleDataList" class="form-label">Sinif Ögretmeni</label>
+                            <select class="form-select" ng-model="SinifOgretmeni" ng-options="x.value for x in SinifOgretmenler"></select>
+                        </div>
+                        <div class="m-3 row">
+                            <label for="exampleDataList" class="form-label">Rehber Ögretmeni</label>
+                            <select class="form-select" ng-model="RehberOgretmeni" ng-options="x.value for x in RehberOgretmenler"></select>
+                        </div>
+                        <div class="m-3 row justify-content-center ">
+                            <button type="submit" class="btn btn-primary mb-3 col-5">Kaydet</button>
+                        </div>
                     </div>
                 </div>
             </div>
