@@ -45,7 +45,9 @@
     "outputFileName": "wwwroot/js/app.min.js",
     "inputFiles": [
       "wwwroot/js/app.js",
-      "wwwroot/js/controller.js"
+      "wwwroot/js/controller.js",
+      "wwwroot/js/filter.js",
+      "wwwroot/js/directive.js"
     ],
     // Optionally specify minification options
     "minify": {

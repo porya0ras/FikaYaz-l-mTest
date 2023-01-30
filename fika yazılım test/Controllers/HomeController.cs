@@ -23,17 +23,17 @@ public class HomeController : Controller
     [HttpPost]
     [Route($"/{nameof(GetOgrenciler)}")]
     public async Task<IActionResult> GetOgrenciler(
-             string? Ara,
-             string[]? Hobiler,
-             string? SinifOgretmeni,
-             int? SortByAdSonad,
-             int? SortByBolum,
-             int? SortBySinifOgretmen,
-             int? page)
+               [FromQuery] string? Ara,
+               [FromQuery] string[]? Hobiler,
+               [FromQuery] string? SinifOgretmeni,
+               [FromQuery] int? SortByAdSonad,
+               [FromQuery] int? SortByBolum,
+               [FromQuery] int? SortBySinifOgretmen,
+               [FromQuery] int? page)
     {
         if (_context.Ogrenciler == null)
         {
-            return NotFound();
+            return Ok(null);
         }
 
         var result = _context.Ogrenciler.Where(e => true);
@@ -117,13 +117,45 @@ public class HomeController : Controller
             finalResult=finalResult.OrderBy(e => e.Id);
         }
 
+        var count = await finalResult.CountAsync();
+
         var searchRes = await finalResult
         .Skip((pageNumber-1)*pagesize)
         .Take(pagesize)
         .ToListAsync();
 
-        return Ok(searchRes);
+
+
+        return Ok(new { searchRes, count });
     }
+
+
+    [Route("/GetOgrenci/{id}")]
+    public async Task<IActionResult> GetOgrenci(string id)
+    {
+        if (_context.Ogrenciler == null)
+        {
+            return Ok(null);
+        }
+
+        if (string.IsNullOrEmpty(id))
+        {
+            return Ok(null);
+        }
+
+        var gUId = Guid.Parse(id);
+
+        var row =await _context.Ogrenciler.Where(e => e.Id==gUId).Select(e=>new {
+            e.Id,
+            e.NameFamily,
+            e.Bolum,
+            e.Hobilar,
+            e.SinifOgretmeni,
+            e.RehberOgretmeni}).FirstOrDefaultAsync();
+
+        return Ok(row);
+    }
+
 
     [Route($"/{nameof(GetHobiler)}")]
     public async Task<IActionResult> GetHobiler()

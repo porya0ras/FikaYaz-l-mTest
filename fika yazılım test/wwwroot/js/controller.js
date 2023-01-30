@@ -10,12 +10,14 @@
             '$timeout',
             function ($scope, $http, $window, $timeout) {
                 $scope.page = 1;
+                $scope.editedId = 0;
 
                 $scope.SinifOgretmenler = [];
                 $scope.RehberOgretmenler = [];
                 $scope.Hobiler = [];
                 $scope.bolumler = [];
                 $scope.Ogrenciler = [];
+                $scope.OgrencilerCount = 0;
 
 
                 $scope.RehberOgretmeni = {};
@@ -23,6 +25,7 @@
                 $scope.Hobi = {};
                 $scope.bolum = {};
                 $scope.AdSoyad = "";
+                $scope.Ogrenci = {};
 
                 $scope.HobiFilter = {};
                 $scope.AdSoyadFilter = "";
@@ -91,10 +94,11 @@
                         method: 'POST',
                         url: '/GetOgrenciler',
                         data: xsrf,
-                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                        traditional: true,
                     }).then(
                         function (response) {
-                            $scope.Ogrenciler = response.data;
+                            $scope.Ogrenciler = response.data.searchRes;
+                            $scope.OgrencilerCount = response.data.count;
                         },
                         function (response) {
                             console.log('اخطار Connection!');
@@ -102,6 +106,29 @@
                         }
                     );
                 };
+
+                $scope.Detay = function ($data) {
+                    $scope.editedId = $data.id;
+                    $scope.GetOgrenci($scope.editedId);
+                };
+
+                $scope.GetOgrenci = function ($Id) {
+                    $http
+                        .get('/GetOgrenci/' + $Id)
+                        .then(function (response) {
+                            $scope.Ogrenci = response.data;
+                            $scope.RehberOgretmeni = $scope.Ogrenci.RehberOgretmeni;
+                            $scope.SinifOgretmeni = $scope.Ogrenci.SinifOgretmeni;
+                            $scope.Hobi = $scope.Ogrenci.Hobilar;
+                            $scope.bolum = $scope.Ogrenci.Bolum;
+                            $scope.AdSoyad = $scope.Ogrenci.NameFamily;
+                        });
+                };
+
+                $scope.ChangePage = function ($page) {
+                    $scope.page = $page;
+                    $scope.GetOgrenciler();
+                }
 
                 $scope.ChangeAdSoyadSort = function () {
                     if ($scope.AdSoyadSort == 0) {
@@ -144,6 +171,11 @@
                         }
                     }
                     $scope.GetOgrenciler();
+                };
+
+                $scope.showModal = false;
+                $scope.YeniOgrenci = function () {
+                    $scope.showModal = !$scope.showModal;
                 };
 
             }]);
