@@ -17,17 +17,36 @@
                                         <div class="input-group mb-3">
                                             <span class="input-group-text" id="basic-addon1"><i class="fa fa-magnifying-glass"></i></span>
                                             <input ng-model="AdSoyadFilter" type="text" class="form-control" placeholder="Ara" aria-label="Ara" aria-describedby="button-addon2">
-                                            <button class="btn btn-outline-secondary" type="button" id="button-addon2">%</button>
+                                            <button class="btn btn-outline-secondary" type="button" id="button-addon2"><i class="fa fa-microphone"></i></button>
                                         </div>
                                     </div>
                                     <div class="col-3">
-                                        <select class="form-select" ng-model="HobiFilter" ng-options="x.value for x in Hobiler"></select>
+                                        <div class="dropdown dropright">
+                                            <button class="btn bg-light w-100  dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <span ng-repeat="h in HobiFilter">{{h.label}},</span>
+                                                <span ng-if="HobiFilter.length==0">Hobiler</span>
+                                                <a ng-if="HobiFilter.length>0" ng-click="clearHobiFilter()"><i class="fa fa-xmark"></i></a>
+                                            </button>
+
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                <li ng-repeat="x in Hobiler"><a class="dropdown-item" ng-click="setHobiFilter(x)">{{x.label}}</a></li>
+                                            </ul>
+                                        </div>
                                     </div>
                                     <div class="col-3">
-                                        <select class="form-select" ng-model="SinifOgretmeniFilter" ng-options="x.value for x in SinifOgretmenler"></select>
+                                        <div class="dropdown">
+                                            <button class="btn bg-light w-100  dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                                {{SinifOgretmeniFilter.label}}
+                                                <a ng-if="SinifOgretmeniFilter.id" ng-click="clearSinifOgretmeniFilter()"><i class="fa fa-xmark"></i></a>
+                                                <span ng-if="!SinifOgretmeniFilter.id">Sinif Ogretmeni</span>
+                                            </button>
+                                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                                <li ng-repeat="x in SinifOgretmenler"><a class="dropdown-item" ng-click="setSinifOgretmeniFilter(x)">{{x.label}}</a></li>
+                                            </ul>
+                                        </div>
                                     </div>
                                     <div class="col-2">
-                                        <button type="submit" class="btn btn-primary mb-3">Ara</button>
+                                        <button ng-click="GetOgrenciler()" class="btn btn-primary mb-3">Ara</button>
                                     </div>
                                 </form>
                             </div>
@@ -35,31 +54,31 @@
                         <table class="table table-striped ">
                             <thead>
                                 <tr class="table-dark">
-                                    <th scope="col"><a ng-click="ChangeAdSoyadSort(AdSoyadSort)"><i class="fa " ng-class="{'fa-fw fa-sort':AdSoyadSort==0,'fa-fw':AdSoyadSort==1,'fa-sort':AdSoyadSort==-1}"></i> Ad Soyad</a></th>
-                                    <th ng-click="ChangebolumSort()" scope="col"><i class="fa " ng-class="{'fa-fw fa-sort':bolumSort==0,'fa-fw':bolumSort==1,'fa-sort':bolumSort==-1}"></i> Bölüm</th>
+                                    <th scope="col"><a ng-click="ChangeAdSoyadSort(AdSoyadSort)"><i class="fa " ng-class="{'fa-fw fa-sort':AdSoyadSort==0,'fa-sort-down':AdSoyadSort==1,'fa-sort-up':AdSoyadSort==-1}"></i> Ad Soyad</a></th>
+                                    <th ng-click="ChangebolumSort()" scope="col"><i class="fa " ng-class="{'fa-fw fa-sort':bolumSort==0,'fa-sort-down':bolumSort==1,'fa-sort-up':bolumSort==-1}"></i> Bölüm</th>
                                     <th scope="col">Hobiler</th>
-                                    <th ng-click="ChangeSinifOgretmeniSort()" scope="col"><i class="fa " ng-class="{'fa-fw fa-sort':SinifOgretmeniSort==0,'fa-fw':SinifOgretmeniSort==1,'fa-sort':SinifOgretmeniSort==-1}"></i> Sinif Ögretmen</th>
+                                    <th ng-click="ChangeSinifOgretmeniSort()" scope="col"><i class="fa " ng-class="{'fa-fw fa-sort':SinifOgretmeniSort==0,'fa-sort-down':SinifOgretmeniSort==1,'fa-sort-up':SinifOgretmeniSort==-1}"></i> Sinif Ögretmen</th>
                                     <th scope="col">Rehber Ögretmen</th>
                                     <th scope="col">Işiem</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr ng-repeat="row in Ogrenciler" ng-if="Ogrenciler.length>0">
+                                <tr ng-repeat="row in Ogrenciler" ng-if="Ogrenciler.length>0" ng-class="{'bg-danger':row.delFlag==true}">
                                     <td>{{row.nameFamily}}</td>
                                     <td>{{row.bolum}}</td>
                                     <td><div ng-repeat="h in row.hobilar">{{h}}</div>  </td>
                                     <td>{{row.sinifOgretmeni}}</td>
                                     <td>{{row.rehberOgretmeni}}</td>
-                                     <td><a ng-click="Detay(row)">Detay</a> <a ng-click="alert('s')">Sill</a></td>
+                                    <td ng-if="!row.delFlag"><a class="text-primary" role="button" ng-click="Detay(row)">Detay</a> <a class="text-danger" role="button" ng-click="SilOgrenci(row)">Sill</a></td>
                                 </tr>
                             </tbody>
                         </table>
                         <nav aria-label="" ng-if="OgrencilerCount!=0">
                             <ul class="pagination justify-content-center">
                                 <li class="page-item">
-                                    <a class="page-link" href="#" tabindex="-1" ><<</a>
+                                    <a class="page-link" href="#" tabindex="-1"><<</a>
                                 </li>
-                                <li ng-repeat="n in [] | range:(OgrencilerCount/10)+1" class="page-item"><a class="page-link" ng-click="ChangePage(n)" >{{n}}</a></li>
+                                <li ng-repeat="n in [] | range:(OgrencilerCount/10)+( OgrencilerCount%10==0?0:1)" class="page-item"><a class="page-link" ng-click="ChangePage(n)">{{n}}</a></li>
                                 <li class="page-item">
                                     <a class="page-link" href="#">>></a>
                                 </li>
@@ -76,31 +95,60 @@
 
                         <div class="m-3 row">
                             <label for="exampleDataList" class="form-label">Ad Soyad</label>
-                            <input class="form-control" ng-model="AdSoyad" list="datalistOptions" id="exampleDataList" placeholder="Type to search..." />
+                            <input ng-disabled="!AdSoyad" class="form-control" ng-model="AdSoyad" list="datalistOptions" id="exampleDataList" placeholder="Type to search..." />
                         </div>
                         <div class="m-3 row">
-                            <label for="exampleDataList" class="form-label">Bölüm</label>
-                            <select class="form-select" ng-model="bolum" ng-options="x.value for x in bolumler"></select>
+                            <label for="exampleDataList2" class="form-label">Bölüm</label>
+                            <div ng-disabled="!bolum.id" class="dropdown dropright">
+                                <button class="btn bg-light w-100 btn-lg dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                    {{bolum.label}}
+                                </button>
+                                <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton1">
+                                    <li ng-repeat="x in bolumler"><a class="dropdown-item" ng-click="setBolum(x)">{{x.label}}</a></li>
+                                </ul>
+                            </div>
                         </div>
                         <div class="m-3 row">
                             <label for="exampleDataList" class="form-label">Hobiler</label>
-                            <select class="form-select" ng-model="Hobi" ng-options="x.value for x in Hobiler"></select>
+                            <div ng-disabled="!Hobi.length==0" class="dropdown dropright">
+                                <button class="btn bg-light w-100 btn-lg dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <span ng-repeat="h in Hobi">{{h.label}},</span>
+                                    <span ng-if="Hobi.length==0">-select-</span>
+                                </button>
+                                <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton1">
+                                    <li ng-repeat="x in Hobiler"><a class="dropdown-item" ng-click="setHobi(x)">{{x.label}}</a></li>
+                                </ul>
+                            </div>
                         </div>
                         <div class="m-3 row">
                             <label for="exampleDataList" class="form-label">Sinif Ögretmeni</label>
-                            <select class="form-select" ng-model="SinifOgretmeni" ng-options="x.value for x in SinifOgretmenler"></select>
+                            <div ng-disabled="!SinifOgretmeni.id" class="dropdown dropright">
+                                <button class="btn bg-light w-100 btn-lg dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                    {{SinifOgretmeni.label}}
+                                </button>
+                                <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton1">
+                                    <li ng-repeat="x in SinifOgretmenler"><a class="dropdown-item" ng-click="setSinifOgretmeni(x)">{{x.label}}</a></li>
+                                </ul>
+                            </div>
                         </div>
                         <div class="m-3 row">
                             <label for="exampleDataList" class="form-label">Rehber Ögretmeni</label>
-                            <select class="form-select" ng-model="RehberOgretmeni" ng-options="x.value for x in RehberOgretmenler"></select>
+                            <div ng-disabled="!RehberOgretmeni.id" class="dropdown dropright">
+                                <button class="btn bg-light w-100 btn-lg dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                    {{RehberOgretmeni.label}}
+                                </button>
+                                <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton1">
+                                    <li ng-repeat="x in RehberOgretmenler"><a class="dropdown-item" ng-click="setRehberOgretmeni(x)">{{x.label}}</a></li>
+                                </ul>
+                            </div>
                         </div>
                         <div class="m-3 row justify-content-center ">
-                            <button type="submit" class="btn btn-primary mb-3 col-5">Kaydet</button>
+                            <button ng-disabled="!Ogrenci.id" ng-click="kaydetSubmit()" class="btn btn-primary mb-3 col-5">Kaydet</button>
                         </div>
                     </div>
                 </div>
 
-                
+                <!-- modal -->
                 <modal title="Login form" visible="showModal" id="new" class="card mt-2">
                     <h5 class="my-card-title card-title">öğrenci form</h5>
                     <div class="card-body">
@@ -130,6 +178,24 @@
                         </div>
                     </div>
                 </modal>
+                <!-- Sil -->
+                <modal visible="showSilModal" id="sil" class="card mt-2">
+                   <h5 class="card-title">{{SilinanOgrenci.nameFamily}}-öğrenci silme formu</h5>
+                    <div class="card-body">
+                        <div class="m-3 row">
+                            <label for="exampleDataList" class="form-label">Silinme nedini</label>
+                            <input class="form-control" ng-model="SilinmeNedini" list="datalistOptions" id="SilinmeNedini" placeholder="type reason..." />
+                        </div>
+                         <div class="m-3 row  ">
+                             
+                            <button class="btn btn-primary mb-3 col-4" ng-click="Vazgec()">Vazgec</button>
+                           
+                            <button class="btn btn-danger mb-3 col-4 offset-4" ng-click="Sil(SilinanOgrenci)">Sil</button>
+                            
+                        </div>
+                    </div>
+                </modal>
+                <!-- ----- -->
             </div>
         </div>
     </div>

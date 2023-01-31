@@ -20,16 +20,19 @@
                 $scope.OgrencilerCount = 0;
 
 
-                $scope.RehberOgretmeni = {};
-                $scope.SinifOgretmeni = {};
-                $scope.Hobi = {};
-                $scope.bolum = {};
+                $scope.RehberOgretmeni = { label: "-select-"};
+                $scope.SinifOgretmeni = { label:"-select-"};
+                $scope.Hobi = [];
+                $scope.bolum = { label:'-select-'};
                 $scope.AdSoyad = "";
                 $scope.Ogrenci = {};
+                $scope.SilinanOgrenci = {};
 
-                $scope.HobiFilter = {};
+                $scope.HobiFilter = [];
                 $scope.AdSoyadFilter = "";
                 $scope.SinifOgretmeniFilter = {};
+
+                $scope.SilinmeNedini = "";
 
                 $scope.bolumSort = 0;
                 $scope.AdSoyadSort = 0;
@@ -43,6 +46,8 @@
                     $scope.Getbolumler();
 
                     $scope.GetOgrenciler();
+
+                    
                 };
 
                 $scope.GetSinifOgretmenler = function () {
@@ -81,20 +86,32 @@
                     var xsrf = "page=" + $scope.page;
 
                     if ($scope.AdSoyadSort!=0) {
-                        xsrf += "SortByAdSonad=" + $scope.AdSoyadSort;
+                        xsrf += "&SortByAdSonad=" + $scope.AdSoyadSort;
                     }
                     if ($scope.bolumSort != 0) {
-                        xsrf += "SortByBolum=" + $scope.bolumSort;
+                        xsrf += "&SortByBolum=" + $scope.bolumSort;
                     }
                     if ($scope.SinifOgretmeniSort != 0) {
-                        xsrf += "SortBySinifOgretmen=" + $scope.SinifOgretmeniSort;
+                        xsrf += "&SortBySinifOgretmen=" + $scope.SinifOgretmeniSort;
+                    }
+                    if ($scope.SinifOgretmeniFilter.id != undefined && $scope.SinifOgretmeniFilter.id != 0) {
+                        xsrf += "&SinifOgretmeni=" + $scope.SinifOgretmeniFilter.id;
+                    }
+                    if ($scope.AdSoyadFilter != "" ) {
+                        xsrf += "&Ara=" + $scope.AdSoyadFilter;
+                    }
+                    if ($scope.HobiFilter.length > 0) {
+                        for (let row in $scope.HobiFilter) {
+                            xsrf += "&Hobiler[" + row+"]=" + $scope.HobiFilter[row].id
+                        }
+                      
                     }
 
                     $http({
                         method: 'POST',
                         url: '/GetOgrenciler',
                         data: xsrf,
-                        traditional: true,
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     }).then(
                         function (response) {
                             $scope.Ogrenciler = response.data.searchRes;
@@ -107,6 +124,42 @@
                     );
                 };
 
+                $scope.Sil = function ($row) {
+                    var xsrf = "Id=" + $row.id;
+                    xsrf += "&Reason=" + $scope.SilinmeNedini;
+
+                    $http({
+                        method: 'POST',
+                        url: '/Sil',
+                        data: xsrf,
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    }).then(
+                        function (response) {
+                            console.log("Done!")
+                            $scope.SilinmeNedini = "";
+                            $scope.SilinanOgrenci = {};
+                            $scope.showSilModal = false;
+
+                            $timeout(function () {
+
+                                $scope.GetOgrenciler();
+
+                            }, 2000);
+                        },
+                        function (response) {
+                            console.log('اخطار Connection!');
+                            return false;
+                        }
+                    );
+                }
+
+                $scope.Vazgec = function () {
+
+                    $scope.SilinmeNedini = '';
+                    $scope.SilinanOgrenci = {};
+                    $scope.showSilModal = false;
+                };
+
                 $scope.Detay = function ($data) {
                     $scope.editedId = $data.id;
                     $scope.GetOgrenci($scope.editedId);
@@ -117,11 +170,11 @@
                         .get('/GetOgrenci/' + $Id)
                         .then(function (response) {
                             $scope.Ogrenci = response.data;
-                            $scope.RehberOgretmeni = $scope.Ogrenci.RehberOgretmeni;
-                            $scope.SinifOgretmeni = $scope.Ogrenci.SinifOgretmeni;
-                            $scope.Hobi = $scope.Ogrenci.Hobilar;
-                            $scope.bolum = $scope.Ogrenci.Bolum;
-                            $scope.AdSoyad = $scope.Ogrenci.NameFamily;
+                            $scope.RehberOgretmeni = $scope.Ogrenci.rehberOgretmeni;
+                            $scope.SinifOgretmeni = $scope.Ogrenci.sinifOgretmeni;
+                            $scope.Hobi = $scope.Ogrenci.hobilar;
+                            $scope.bolum = $scope.Ogrenci.bolum;
+                            $scope.AdSoyad = $scope.Ogrenci.nameFamily;
                         });
                 };
 
@@ -142,6 +195,10 @@
                             $scope.AdSoyadSort = 1;
                         }
                     }
+
+                    $scope.SinifOgretmeniSort = 0;
+                    $scope.bolumSort = 0;
+
                     $scope.GetOgrenciler();
                 };
                 $scope.ChangeSinifOgretmeniSort = function () {
@@ -156,6 +213,9 @@
                             $scope.SinifOgretmeniSort = 1;
                         }
                     }
+                    $scope.bolumSort = 0;
+                    $scope.AdSoyadSort = 0;
+
                     $scope.GetOgrenciler();
                 };
                 $scope.ChangebolumSort = function () {
@@ -170,6 +230,10 @@
                             $scope.bolumSort = 1;
                         }
                     }
+
+                    $scope.SinifOgretmeniSort = 0;
+                    $scope.AdSoyadSort = 0;
+
                     $scope.GetOgrenciler();
                 };
 
@@ -177,6 +241,68 @@
                 $scope.YeniOgrenci = function () {
                     $scope.showModal = !$scope.showModal;
                 };
+
+                $scope.showSilModal = false;
+                $scope.SilOgrenci = function ($row) {
+                    $scope.showSilModal = !$scope.showSilModal;
+                    $scope.SilinanOgrenci = $row;
+                };
+
+                $scope.setBolum = function ($val) {
+                    $scope.bolum = $val;
+                };
+                $scope.setRehberOgretmeni = function ($val) {
+                    $scope.RehberOgretmeni = $val;
+                };
+                $scope.setSinifOgretmeni = function ($val) {
+                    $scope.SinifOgretmeni = $val;
+                };
+                $scope.setHobi = function ($val) {
+                    $scope.Hobi.push($val);
+                };
+
+
+
+                $scope.setSinifOgretmeniFilter = function ($val) {
+                    $scope.SinifOgretmeniFilter = $val;
+
+                };
+                $scope.setHobiFilter = function ($val) {
+                    $scope.HobiFilter.push($val);
+                };
+
+                $scope.kaydetSubmit = function () {
+                    console.log("$ogrenci", 'd');
+                    if ($scope.RehberOgretmeni != $scope.Ogrenci.rehberOgretmeni
+                        || $scope.SinifOgretmeni != $scope.Ogrenci.sinifOgretmeni
+                        || $scope.Hobi != $scope.Ogrenci.hobilar
+                        || $scope.bolum != $scope.Ogrenci.bolum
+                        || $scope.AdSoyad != $scope.Ogrenci.nameFamily) {
+
+                        $scope.Ogrenci.rehberOgretmeni = $scope.RehberOgretmeni;
+                        $scope.Ogrenci.sinifOgretmeni = $scope.SinifOgretmeni;
+                        $scope.Ogrenci.hobilar = $scope.Hobi;
+                        $scope.Ogrenci.bolum = $scope.bolum;
+                        $scope.Ogrenci.nameFamily = $scope.AdSoyad;
+
+                        $scope.Save($scope.Ogrenci);
+                    }
+
+
+                };
+
+                $scope.Save = function ($ogrenci) {
+                    console.log("$ogrenci", $ogrenci);
+                }
+
+                $scope.clearHobiFilter = function () {
+                    $scope.HobiFilter = [];
+                };
+                $scope.clearSinifOgretmeniFilter = function () {
+                    $scope.SinifOgretmeniFilter = { };
+                };
+
+               
 
             }]);
 })();

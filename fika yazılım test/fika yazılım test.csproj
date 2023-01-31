@@ -8,6 +8,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="wwwroot\lib\bootstrap-select\**" />
+    <Content Remove="wwwroot\lib\bootstrap-select\**" />
+    <EmbeddedResource Remove="wwwroot\lib\bootstrap-select\**" />
+    <None Remove="wwwroot\lib\bootstrap-select\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="wwwroot\css\" />
     <Folder Include="wwwroot\images\" />
     <Folder Include="wwwroot\lib\bootstrap\" />

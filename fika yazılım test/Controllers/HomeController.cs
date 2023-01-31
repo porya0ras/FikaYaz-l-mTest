@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using fika_yazılım_test.Models.ViewModels;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace fika_yazılım_test.Controllers;
@@ -22,14 +23,7 @@ public class HomeController : Controller
 
     [HttpPost]
     [Route($"/{nameof(GetOgrenciler)}")]
-    public async Task<IActionResult> GetOgrenciler(
-               [FromQuery] string? Ara,
-               [FromQuery] string[]? Hobiler,
-               [FromQuery] string? SinifOgretmeni,
-               [FromQuery] int? SortByAdSonad,
-               [FromQuery] int? SortByBolum,
-               [FromQuery] int? SortBySinifOgretmen,
-               [FromQuery] int? page)
+    public async Task<IActionResult> GetOgrenciler(SearchModel val)
     {
         if (_context.Ogrenciler == null)
         {
@@ -39,20 +33,21 @@ public class HomeController : Controller
         var result = _context.Ogrenciler.Where(e => true);
 
         //filtering
-        if (!string.IsNullOrEmpty(Ara))
+        if (!string.IsNullOrEmpty(val.Ara))
         {
-            result=result.Where(e => e.NameFamily.Contains(Ara));
+            result=result.Where(e => e.NameFamily.Contains(val.Ara));
         }
 
-        if (Hobiler!=null && Hobiler.Length>0)
+        if (val.Hobiler!=null && val.Hobiler.Length>0)
         {
-            var _hobiler = Hobiler.Select(e => Guid.Parse(e)).ToList();
+            var _hobiler = val.Hobiler.Select(e => Guid.Parse(e)).ToList();
             result=result.Where(e => e.Hobilar.Any(h => _hobiler.Any(h2 => h2==h.Id)));
         }
 
-        if (!string.IsNullOrEmpty(SinifOgretmeni))
+        if (!string.IsNullOrEmpty(val.SinifOgretmeni))
         {
-            result=result.Where(e => e.SinifOgretmeni.NameFamily.Contains(SinifOgretmeni));
+            var _SinifOgretmeniId = Guid.Parse(val.SinifOgretmeni);
+            result=result.Where(e => e.SinifOgretmeni.Id.Equals(_SinifOgretmeniId));
         }
 
 
@@ -69,50 +64,50 @@ public class HomeController : Controller
         });
 
         //sorting
-        if (SortByAdSonad!=0)
+        if (val.SortByAdSonad.HasValue && val.SortByAdSonad!=0)
         {
-            if (SortByAdSonad==1)
+            if (val.SortByAdSonad==1)
             {
-                result=result.OrderBy(e => e.NameFamily);
+                finalResult=finalResult.OrderBy(e => e.NameFamily);
             }
-            else if (SortByAdSonad==-1)
+            else if (val.SortByAdSonad==-1)
             {
-                result=result.OrderByDescending(e => e.NameFamily);
+                finalResult=finalResult.OrderByDescending(e => e.NameFamily);
             }
         }
 
-        if (SortByBolum!=0)
+        if (val.SortByBolum.HasValue && val.SortByBolum!=0)
         {
-            if (SortByBolum==1)
+            if (val.SortByBolum==1)
             {
-                result=result.OrderBy(e => e.Bolum);
+                finalResult=finalResult.OrderBy(e => e.Bolum);
             }
-            else if (SortByBolum==-1)
+            else if (val.SortByBolum==-1)
             {
                 result=result.OrderByDescending(e => e.Bolum);
             }
         }
 
-        if (SortBySinifOgretmen!=0)
+        if (val.SortBySinifOgretmen.HasValue && val.SortBySinifOgretmen!=0)
         {
-            if (SortBySinifOgretmen==1)
+            if (val.SortBySinifOgretmen==1)
             {
-                result=result.OrderBy(e => e.SinifOgretmeni);
+                finalResult=finalResult.OrderBy(e => e.SinifOgretmeni);
             }
-            else if (SortBySinifOgretmen==-1)
+            else if (val.SortBySinifOgretmen==-1)
             {
-                result=result.OrderByDescending(e => e.SinifOgretmeni);
+                finalResult=finalResult.OrderByDescending(e => e.SinifOgretmeni);
             }
         }
 
         int pagesize = 10;
         int pageNumber = 1;
-        if (page.HasValue && page.Value>0)
+        if (val.page.HasValue && val.page.Value>0)
         {
-            pageNumber=page.Value;
+            pageNumber=val.page.Value;
         }
 
-        if (SortBySinifOgretmen==0 && SortByBolum==0 && SortByAdSonad==0)
+        if (val.SortBySinifOgretmen==0 && val.SortByBolum==0 && val.SortByAdSonad==0)
         {
             finalResult=finalResult.OrderBy(e => e.Id);
         }
@@ -145,13 +140,15 @@ public class HomeController : Controller
 
         var gUId = Guid.Parse(id);
 
-        var row =await _context.Ogrenciler.Where(e => e.Id==gUId).Select(e=>new {
+        var row = await _context.Ogrenciler.Where(e => e.Id==gUId).Select(e => new
+        {
             e.Id,
             e.NameFamily,
-            e.Bolum,
-            e.Hobilar,
-            e.SinifOgretmeni,
-            e.RehberOgretmeni}).FirstOrDefaultAsync();
+            Bolum = new { e.Bolum.Id, label = e.Bolum.Name },
+            Hobilar = e.Hobilar.Select(e => new { e.Id, label = e.Name }),
+            SinifOgretmeni = new { e.SinifOgretmeni.Id, label = e.SinifOgretmeni.NameFamily },
+            RehberOgretmeni = new { e.RehberOgretmeni.Id, label = e.RehberOgretmeni.NameFamily }
+        }).FirstOrDefaultAsync();
 
         return Ok(row);
     }
@@ -165,7 +162,7 @@ public class HomeController : Controller
             return Ok(new List<int>());
         }
 
-        var result = await _context.Hobilar.Select(e => new { e.Id, Value = e.Name }).ToListAsync();
+        var result = await _context.Hobilar.Select(e => new { e.Id, label = e.Name }).ToListAsync();
         return Ok(result);
     }
 
@@ -177,7 +174,7 @@ public class HomeController : Controller
             return Ok(new List<int>());
         }
 
-        var result = await _context.Bolumler.Select(e => new { e.Id, Value = e.Name }).ToListAsync();
+        var result = await _context.Bolumler.Select(e => new { e.Id, label = e.Name }).ToListAsync();
         return Ok(result);
     }
 
@@ -189,7 +186,7 @@ public class HomeController : Controller
             return Ok(new List<int>());
         }
 
-        var result = await _context.SinifOgretmeniler.Select(e => new { e.Id, Value = e.NameFamily }).ToListAsync();
+        var result = await _context.SinifOgretmeniler.Select(e => new { e.Id, label = e.NameFamily }).ToListAsync();
         return Ok(result);
     }
 
@@ -201,10 +198,71 @@ public class HomeController : Controller
             return Ok(new List<int>());
         }
 
-        var result = await _context.RehberOgretmeniler.Select(e => new { e.Id, Value = e.NameFamily }).ToListAsync();
+        var result = await _context.RehberOgretmeniler.Select(e => new { e.Id, label = e.NameFamily }).ToListAsync();
         return Ok(result);
     }
 
+    [HttpPost]
+    [Route($"/{nameof(Sil)}")]
+    public async Task<IActionResult> Sil(DeleteModel val)
+    {
+        if (_context.Ogrenciler == null)
+        {
+            throw new Exception("NotFound");
+        }
+        var gUId = Guid.Parse(val.Id);
+        var row =await _context.Ogrenciler.Where(e => e.Id==gUId).FirstOrDefaultAsync();
 
+        if(row== null)
+        {
+            throw new Exception("NotFound");
+        }
+
+
+        if(row.delFlag==true)
+        {
+            return Ok(true);
+        }
+        else
+        {
+            row.delFlag=true;
+            row.DeleteRason=val.Reason;
+            await _context.SaveChangesAsync();
+
+            return Ok(true);
+        }
+    }
+
+    
+    [HttpPost]
+    [Route($"/{nameof(Kaydet)}")]
+    public async Task<IActionResult> Kaydet(EditModel val)
+    {
+        if (_context.Ogrenciler == null)
+        {
+            throw new Exception("NotFound");
+        }
+        var gUId = Guid.Parse(val.Id);
+        var row =await _context.Ogrenciler.Where(e => e.Id==gUId).FirstOrDefaultAsync();
+
+        if(row== null)
+        {
+            throw new Exception("NotFound");
+        }
+
+
+        if(row.delFlag==true)
+        {
+            return Ok(true);
+        }
+        else
+        {
+            row.delFlag=true;
+            row.DeleteRason=val.Reason;
+            await _context.SaveChangesAsync();
+
+            return Ok(true);
+        }
+    }
 }
 

@@ -29,3 +29,7 @@ body {
 .mt-2_7 {
     margin-top: 2.85rem !important;
 }
+
+.modal[class~="card"] {
+    background-color:transparent !important;
+}
