@@ -102,6 +102,7 @@
                             <div ng-disabled="!bolum.id" class="dropdown dropright">
                                 <button class="btn bg-light w-100 btn-lg dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                                     {{bolum.label}}
+                                     <a ng-if="bolum.id" ng-click="clearbolum()"><i class="fa fa-xmark"></i></a>
                                 </button>
                                 <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton1">
                                     <li ng-repeat="x in bolumler"><a class="dropdown-item" ng-click="setBolum(x)">{{x.label}}</a></li>
@@ -114,6 +115,7 @@
                                 <button class="btn bg-light w-100 btn-lg dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                                     <span ng-repeat="h in Hobi">{{h.label}},</span>
                                     <span ng-if="Hobi.length==0">-select-</span>
+                                    <a ng-if="Hobi.length>0" ng-click="clearHobi()"><i class="fa fa-xmark"></i></a>
                                 </button>
                                 <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton1">
                                     <li ng-repeat="x in Hobiler"><a class="dropdown-item" ng-click="setHobi(x)">{{x.label}}</a></li>
@@ -125,6 +127,7 @@
                             <div ng-disabled="!SinifOgretmeni.id" class="dropdown dropright">
                                 <button class="btn bg-light w-100 btn-lg dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                                     {{SinifOgretmeni.label}}
+                                    <a ng-if="SinifOgretmeni.id" ng-click="clearSinifOgretmeni()"><i class="fa fa-xmark"></i></a>
                                 </button>
                                 <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton1">
                                     <li ng-repeat="x in SinifOgretmenler"><a class="dropdown-item" ng-click="setSinifOgretmeni(x)">{{x.label}}</a></li>
@@ -136,6 +139,7 @@
                             <div ng-disabled="!RehberOgretmeni.id" class="dropdown dropright">
                                 <button class="btn bg-light w-100 btn-lg dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
                                     {{RehberOgretmeni.label}}
+                                    <a ng-if="RehberOgretmeni.id" ng-click="clearRehberOgretmeni()"><i class="fa fa-xmark"></i></a>
                                 </button>
                                 <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton1">
                                     <li ng-repeat="x in RehberOgretmenler"><a class="dropdown-item" ng-click="setRehberOgretmeni(x)">{{x.label}}</a></li>
@@ -149,49 +153,85 @@
                 </div>
 
                 <!-- modal -->
-                <modal title="Login form" visible="showModal" id="new" class="card mt-2">
-                    <h5 class="my-card-title card-title">öğrenci form</h5>
-                    <div class="card-body">
+                <modal visible="showModal" id="new" class="card mt-2">
+                    <div class="card mt-2">
+                        <h5 class="my-card-title card-title">öğrenci form</h5>
+                        <div class="card-body">
 
-                        <div class="m-3 row">
-                            <label for="exampleDataList" class="form-label">Ad Soyad</label>
-                            <input class="form-control" ng-model="AdSoyad" list="datalistOptions" id="exampleDataList" placeholder="Type to search..." />
-                        </div>
-                        <div class="m-3 row">
-                            <label for="exampleDataList" class="form-label">Bölüm</label>
-                            <select class="form-select" ng-model="bolum" ng-options="x.value for x in bolumler"></select>
-                        </div>
-                        <div class="m-3 row">
-                            <label for="exampleDataList" class="form-label">Hobiler</label>
-                            <select class="form-select" ng-model="Hobi" ng-options="x.value for x in Hobiler"></select>
-                        </div>
-                        <div class="m-3 row">
-                            <label for="exampleDataList" class="form-label">Sinif Ögretmeni</label>
-                            <select class="form-select" ng-model="SinifOgretmeni" ng-options="x.value for x in SinifOgretmenler"></select>
-                        </div>
-                        <div class="m-3 row">
-                            <label for="exampleDataList" class="form-label">Rehber Ögretmeni</label>
-                            <select class="form-select" ng-model="RehberOgretmeni" ng-options="x.value for x in RehberOgretmenler"></select>
-                        </div>
-                        <div class="m-3 row justify-content-center ">
-                            <button type="submit" class="btn btn-primary mb-3 col-5">Kaydet</button>
+                            <div class="m-3 row">
+                                <label for="exampleDataList" class="form-label">Ad Soyad</label>
+                                <input class="form-control" id="NAdSoyad"  list="datalistOptions"  placeholder="type ad soyad" />
+                                
+                            </div>
+                            <div class="m-3 row">
+                                <label for="exampleDataList2" class="form-label">Bölüm</label>
+                                <div class="dropdown dropright">
+                                    <button class="btn bg-light w-100 btn-lg dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                        {{Newbolum.label}}
+                                        <a ng-if="Newbolum.id" ng-click="clearNewbolum()"><i class="fa fa-xmark"></i></a>
+                                    </button>
+                                    <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton1">
+                                        <li ng-repeat="x in bolumler"><a class="dropdown-item" ng-click="setNewBolum(x)">{{x.label}}</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="m-3 row">
+                                <label for="exampleDataList" class="form-label">Hobiler</label>
+                                <div class="dropdown dropright">
+                                    <button class="btn bg-light w-100 btn-lg dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                        <span ng-repeat="h in NewHobi">{{h.label}},</span>
+                                        <span ng-if="NewHobi.length==0">-select-</span>
+                                          <a ng-if="NewHobi.length>0" ng-click="clearNewHobi()"><i class="fa fa-xmark"></i></a>
+                                    </button>
+                                    <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton1">
+                                        <li ng-repeat="x in Hobiler"><a class="dropdown-item" ng-click="setNewHobi(x)">{{x.label}}</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="m-3 row">
+                                <label for="exampleDataList" class="form-label">Sinif Ögretmeni</label>
+                                <div class="dropdown dropright">
+                                    <button class="btn bg-light w-100 btn-lg dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                        {{NewSinifOgretmeni.label}}
+                                        <a ng-if="NewSinifOgretmeni.id" ng-click="clearNewSinifOgretmeni()"><i class="fa fa-xmark"></i></a>
+                                    </button>
+                                    <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton1">
+                                        <li ng-repeat="x in SinifOgretmenler"><a class="dropdown-item" ng-click="setNewSinifOgretmeni(x)">{{x.label}}</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="m-3 row">
+                                <label for="exampleDataList" class="form-label">Rehber Ögretmeni</label>
+                                <div class="dropdown dropright">
+                                    <button class="btn bg-light w-100 btn-lg dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                        {{NewRehberOgretmeni.label}}
+                                        <a ng-if="NewRehberOgretmeni.id" ng-click="clearNewRehberOgretmeni()"><i class="fa fa-xmark"></i></a>
+                                    </button>
+                                    <ul class="dropdown-menu w-100" aria-labelledby="dropdownMenuButton1">
+                                        <li ng-repeat="x in RehberOgretmenler"><a class="dropdown-item" ng-click="setNewRehberOgretmeni(x)">{{x.label}}</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="m-3 row justify-content-center ">
+                                <button ng-click="kaydetNewSubmit()" class="btn btn-primary mb-3 col-5">Kaydet</button>
+                            </div>
                         </div>
                     </div>
                 </modal>
                 <!-- Sil -->
                 <modal visible="showSilModal" id="sil" class="card mt-2">
-                   <h5 class="card-title">{{SilinanOgrenci.nameFamily}}-öğrenci silme formu</h5>
+                    <h5 class="card-title">{{SilinanOgrenci.nameFamily}}-öğrenci silme formu</h5>
                     <div class="card-body">
                         <div class="m-3 row">
                             <label for="exampleDataList" class="form-label">Silinme nedini</label>
-                            <input class="form-control" ng-model="SilinmeNedini" list="datalistOptions" id="SilinmeNedini" placeholder="type reason..." />
+                            <input class="form-control" id="SilinmeNedini" list="datalistOptions" id="SilinmeNedini" placeholder="type reason..." />
                         </div>
-                         <div class="m-3 row  ">
-                             
+                        <div class="m-3 row  ">
+
                             <button class="btn btn-primary mb-3 col-4" ng-click="Vazgec()">Vazgec</button>
-                           
+
                             <button class="btn btn-danger mb-3 col-4 offset-4" ng-click="Sil(SilinanOgrenci)">Sil</button>
-                            
+
                         </div>
                     </div>
                 </modal>
@@ -200,3 +240,4 @@
         </div>
     </div>
 </div>
+

@@ -12,7 +12,7 @@
     "outputFileName": "wwwroot/css/angular.plugins.css",
     // An array of relative input file paths. Globbing patterns supported
     "inputFiles": [
-      "wwwroot/lib/app.css"
+      "wwwroot/lib/lobibox/dist/css/lobibox.css"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "outputFileName": "wwwroot/js/angular.plugins.js",
     "inputFiles": [
       //"wwwroot/lib/ui-select/select.js"
-      "wwwroot/lib/angularjs-dropdown-multiselect.min.js"
+      "wwwroot/lib/lobibox/dist/js/lobibox.js"
     ],
     // Optionally specify minification options
     "minify": {

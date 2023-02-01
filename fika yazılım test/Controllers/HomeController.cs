@@ -1,4 +1,5 @@
-﻿using fika_yazılım_test.Models.ViewModels;
+﻿using fika_yazılım_test.Models;
+using fika_yazılım_test.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -211,15 +212,15 @@ public class HomeController : Controller
             throw new Exception("NotFound");
         }
         var gUId = Guid.Parse(val.Id);
-        var row =await _context.Ogrenciler.Where(e => e.Id==gUId).FirstOrDefaultAsync();
+        var row = await _context.Ogrenciler.Where(e => e.Id==gUId).FirstOrDefaultAsync();
 
-        if(row== null)
+        if (row== null)
         {
             throw new Exception("NotFound");
         }
 
 
-        if(row.delFlag==true)
+        if (row.delFlag==true)
         {
             return Ok(true);
         }
@@ -233,36 +234,82 @@ public class HomeController : Controller
         }
     }
 
-    
+
     [HttpPost]
     [Route($"/{nameof(Kaydet)}")]
-    public async Task<IActionResult> Kaydet(EditModel val)
+    public async Task<IActionResult> Kaydet(NewEditModel val)
     {
         if (_context.Ogrenciler == null)
         {
             throw new Exception("NotFound");
         }
-        var gUId = Guid.Parse(val.Id);
-        var row =await _context.Ogrenciler.Where(e => e.Id==gUId).FirstOrDefaultAsync();
 
-        if(row== null)
+        OgrenciEntity? row;
+
+        if(val.Id=="0")
+        {
+            row=new OgrenciEntity();
+        }
+        else
+        {
+            var gUId = Guid.Parse(val.Id);
+            row= await _context.Ogrenciler.Where(e => e.Id==gUId).FirstOrDefaultAsync();
+        }
+        
+        if (row== null)
         {
             throw new Exception("NotFound");
         }
 
+        try
+        {
+            if (!String.IsNullOrEmpty(val.NameFamily))
+            {
+                row.NameFamily=val.NameFamily;
+            }
+            if (val.Hobiler!=null && val.Hobiler.Length>0)
+            {
+                var _hobiler = val.Hobiler.Select(e => Guid.Parse(e)).ToList();
+                var hlist = _context.Hobilar.Where(e => _hobiler.Any(h => e.Id==h));
 
-        if(row.delFlag==true)
-        {
-            return Ok(true);
-        }
-        else
-        {
-            row.delFlag=true;
-            row.DeleteRason=val.Reason;
+                row.Hobilar=await hlist.ToListAsync();
+            }
+
+            if (val.Bolum!=null)
+            {
+                var BolumgUId = Guid.Parse(val.Bolum);
+                var _Bolum = await _context.Bolumler.Where(e => e.Id==BolumgUId).FirstAsync();
+                row.Bolum=_Bolum;
+            }
+
+            if (val.RehberOgretmeni!=null)
+            {
+                var RehberOgretmenigUId = Guid.Parse(val.RehberOgretmeni);
+                var _RehberOgretmeni = await _context.RehberOgretmeniler.Where(e => e.Id==RehberOgretmenigUId).FirstAsync();
+                row.RehberOgretmeni=_RehberOgretmeni;
+            }
+
+            if (val.SinifOgretmeni!=null)
+            {
+                var SinifOgretmenigUId = Guid.Parse(val.SinifOgretmeni);
+                var _SinifOgretmeni = await _context.SinifOgretmeniler.Where(e => e.Id==SinifOgretmenigUId).FirstAsync();
+                row.SinifOgretmeni=_SinifOgretmeni;
+            }
+
+            if(val.Id=="0")
+            {
+                await _context.Ogrenciler.AddAsync(row);
+            }
+
             await _context.SaveChangesAsync();
 
-            return Ok(true);
+            return Ok(row);
         }
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
+
     }
 }
 

@@ -20,13 +20,20 @@
                 $scope.OgrencilerCount = 0;
 
 
-                $scope.RehberOgretmeni = { label: "-select-"};
-                $scope.SinifOgretmeni = { label:"-select-"};
+                $scope.RehberOgretmeni = { label: "-select-" };
+                $scope.SinifOgretmeni = { label: "-select-" };
                 $scope.Hobi = [];
-                $scope.bolum = { label:'-select-'};
+                $scope.bolum = { label: '-select-' };
                 $scope.AdSoyad = "";
                 $scope.Ogrenci = {};
                 $scope.SilinanOgrenci = {};
+
+                $scope.NewRehberOgretmeni = { label: "-select-" };
+                $scope.NewSinifOgretmeni = { label: "-select-" };
+                $scope.NewHobi = [];
+                $scope.Newbolum = { label: '-select-' };
+                $scope.NAdSoyad = "";
+                $scope.NewOgrenci = {};
 
                 $scope.HobiFilter = [];
                 $scope.AdSoyadFilter = "";
@@ -47,7 +54,7 @@
 
                     $scope.GetOgrenciler();
 
-                    
+
                 };
 
                 $scope.GetSinifOgretmenler = function () {
@@ -85,7 +92,7 @@
                 $scope.GetOgrenciler = function () {
                     var xsrf = "page=" + $scope.page;
 
-                    if ($scope.AdSoyadSort!=0) {
+                    if ($scope.AdSoyadSort != 0) {
                         xsrf += "&SortByAdSonad=" + $scope.AdSoyadSort;
                     }
                     if ($scope.bolumSort != 0) {
@@ -97,14 +104,14 @@
                     if ($scope.SinifOgretmeniFilter.id != undefined && $scope.SinifOgretmeniFilter.id != 0) {
                         xsrf += "&SinifOgretmeni=" + $scope.SinifOgretmeniFilter.id;
                     }
-                    if ($scope.AdSoyadFilter != "" ) {
+                    if ($scope.AdSoyadFilter != "") {
                         xsrf += "&Ara=" + $scope.AdSoyadFilter;
                     }
                     if ($scope.HobiFilter.length > 0) {
                         for (let row in $scope.HobiFilter) {
-                            xsrf += "&Hobiler[" + row+"]=" + $scope.HobiFilter[row].id
+                            xsrf += "&Hobiler[" + row + "]=" + $scope.HobiFilter[row].id
                         }
-                      
+
                     }
 
                     $http({
@@ -118,7 +125,16 @@
                             $scope.OgrencilerCount = response.data.count;
                         },
                         function (response) {
-                            console.log('اخطار Connection!');
+
+                            Lobibox.notify('error', {
+                                delay: 4000,
+                                size: 'mini',
+                                icon: true,
+                                title: 'Error',
+                                msg: response,
+                                position: 'top right',
+                            });
+
                             return false;
                         }
                     );
@@ -126,7 +142,7 @@
 
                 $scope.Sil = function ($row) {
                     var xsrf = "Id=" + $row.id;
-                    xsrf += "&Reason=" + $scope.SilinmeNedini;
+                    xsrf += "&Reason=" + $('#SilinmeNedini').val();
 
                     $http({
                         method: 'POST',
@@ -137,6 +153,7 @@
                         function (response) {
                             console.log("Done!")
                             $scope.SilinmeNedini = "";
+                            $('#SilinmeNedini').val($scope.SilinmeNedini);
                             $scope.SilinanOgrenci = {};
                             $scope.showSilModal = false;
 
@@ -145,9 +162,24 @@
                                 $scope.GetOgrenciler();
 
                             }, 2000);
+
+                            Lobibox.notify('success', {
+                                delay: 4000,
+                                size: 'mini',
+                                icon: true,
+                                msg: 'Silinde !',
+                                position: 'top right',
+                            });
                         },
                         function (response) {
-                            console.log('اخطار Connection!');
+                            Lobibox.notify('error', {
+                                delay: 4000,
+                                size: 'mini',
+                                icon: true,
+                                title: 'Error',
+                                msg: response,
+                                position: 'top right',
+                            });
                             return false;
                         }
                     );
@@ -248,6 +280,7 @@
                     $scope.SilinanOgrenci = $row;
                 };
 
+                //edit
                 $scope.setBolum = function ($val) {
                     $scope.bolum = $val;
                 };
@@ -261,8 +294,21 @@
                     $scope.Hobi.push($val);
                 };
 
+                //new
+                $scope.setNewBolum = function ($val) {
+                    $scope.Newbolum = $val;
+                };
+                $scope.setNewRehberOgretmeni = function ($val) {
+                    $scope.NewRehberOgretmeni = $val;
+                };
+                $scope.setNewSinifOgretmeni = function ($val) {
+                    $scope.NewSinifOgretmeni = $val;
+                };
+                $scope.setNewHobi = function ($val) {
+                    $scope.NewHobi.push($val);
+                };
 
-
+                //filters
                 $scope.setSinifOgretmeniFilter = function ($val) {
                     $scope.SinifOgretmeniFilter = $val;
 
@@ -271,8 +317,9 @@
                     $scope.HobiFilter.push($val);
                 };
 
+
+
                 $scope.kaydetSubmit = function () {
-                    console.log("$ogrenci", 'd');
                     if ($scope.RehberOgretmeni != $scope.Ogrenci.rehberOgretmeni
                         || $scope.SinifOgretmeni != $scope.Ogrenci.sinifOgretmeni
                         || $scope.Hobi != $scope.Ogrenci.hobilar
@@ -291,18 +338,133 @@
 
                 };
 
+                $scope.kaydetNewSubmit = function () {
+
+                    $scope.NewOgrenci.id = 0;
+                    $scope.NewOgrenci.nameFamily = $('#NAdSoyad').val();
+                    $scope.NewOgrenci.hobilar = $scope.NewHobi;
+                    $scope.NewOgrenci.rehberOgretmeni = $scope.NewRehberOgretmeni;
+                    $scope.NewOgrenci.sinifOgretmeni = $scope.NewSinifOgretmeni;
+                    $scope.NewOgrenci.bolum = $scope.Newbolum;
+
+
+                    $scope.Save($scope.NewOgrenci);
+
+                };
+
                 $scope.Save = function ($ogrenci) {
-                    console.log("$ogrenci", $ogrenci);
+
+                    var xsrf = "Id=" + $ogrenci.id;
+                    xsrf += "&NameFamily=" + $ogrenci.nameFamily;
+                    xsrf += "&Bolum=" + $ogrenci.bolum.id;
+                    xsrf += "&SinifOgretmeni=" + $ogrenci.sinifOgretmeni.id;
+                    xsrf += "&RehberOgretmeni=" + $ogrenci.rehberOgretmeni.id;
+
+                    if ($ogrenci.hobilar.length > 0) {
+                        for (let row in $ogrenci.hobilar) {
+                            xsrf += "&Hobiler[" + row + "]=" + $ogrenci.hobilar[row].id
+                        }
+
+                    }
+
+                    $http({
+                        method: 'POST',
+                        url: '/Kaydet',
+                        data: xsrf,
+                        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    }).then(
+                        function (response) {
+                            if (response.data) {
+
+                                if ($ogrenci.id != 0) {
+                                    $scope.RehberOgretmeni = { label: "-select-" };
+                                    $scope.SinifOgretmeni = { label: "-select-" };
+                                    $scope.Hobi = [];
+                                    $scope.bolum = { label: '-select-' };
+                                    $scope.AdSoyad = "";
+                                    $scope.Ogrenci = {};
+
+                                    $scope.GetOgrenciler();
+                                }
+                                else {
+
+                                    $scope.NewRehberOgretmeni = { label: "-select-" };
+                                    $scope.NewSinifOgretmeni = { label: "-select-" };
+                                    $scope.NewHobi = [];
+                                    $scope.Newbolum = { label: '-select-' };
+                                    $scope.NAdSoyad = "";
+                                    $('#NAdSoyad').val($scope.NAdSoyad);
+                                    $scope.NewOgrenci = {};
+
+                                    $timeout(function () {
+
+                                        $scope.GetOgrenciler();
+
+                                    }, 2000);
+
+                                    $scope.showModal = false;
+                                }
+
+                                Lobibox.notify('success', {
+                                    delay: 4000,
+                                    size: 'mini',
+                                    icon: true,
+                                    msg: 'Save Olde!',
+                                    position: 'top right', 
+                                });
+                            }
+                        },
+                        function (response) {
+
+                            Lobibox.notify('error', {
+                                delay: 4000,
+                                size: 'mini',
+                                icon: true,
+                                title: 'Error',
+                                msg: response,
+                                position: 'top right', 
+                            });
+                            return false;
+                        }
+                    );
+
                 }
 
+                // clear filter
                 $scope.clearHobiFilter = function () {
                     $scope.HobiFilter = [];
                 };
                 $scope.clearSinifOgretmeniFilter = function () {
-                    $scope.SinifOgretmeniFilter = { };
+                    $scope.SinifOgretmeniFilter = {};
                 };
 
-               
+                // clear new 
+                $scope.clearNewRehberOgretmeni = function () {
+                    $scope.NewRehberOgretmeni = { label: "-select-" };
+                };
+                $scope.clearNewSinifOgretmeni = function () {
+                    $scope.NewSinifOgretmeni = { label: "-select-" };
+                }
+                $scope.clearNewHobi = function () {
+                    $scope.NewHobi = [];
+                }
+                $scope.clearNewbolum = function () {
+                    $scope.Newbolum = { label: '-select-' };
+                }
+
+                // clear edit 
+                $scope.clearRehberOgretmeni = function () {
+                    $scope.RehberOgretmeni = { label: "-select-" };
+                };
+                $scope.clearNewSinifOgretmeni = function () {
+                    $scope.SinifOgretmeni = { label: "-select-" };
+                }
+                $scope.clearHobi = function () {
+                    $scope.Hobi = [];
+                }
+                $scope.clearNewbolum = function () {
+                    $scope.bolum = { label: '-select-' };
+                }
 
             }]);
 })();
